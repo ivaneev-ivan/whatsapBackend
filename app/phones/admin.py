@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import Phone, PhoneLimit
 from django.urls import reverse
 from django.utils.html import format_html
+
+from .models import Phone, PhoneLimit
+
 
 @admin.register(Phone)
 class PhoneAdmin(admin.ModelAdmin):
@@ -14,7 +16,8 @@ class PhoneAdmin(admin.ModelAdmin):
 @admin.register(PhoneLimit)
 class PhoneLimitAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'link_to_phone', 'message_limits', 'warming_message_limits', 'call_outgoing_limits', 'call_take_phone_limits')
+        'id', 'link_to_phone', 'message_limits', 'warming_message_limits', 'call_outgoing_limits',
+        'call_take_phone_limits')
     list_display_links = ('id', 'link_to_phone')
 
     def link_to_phone(self, obj):

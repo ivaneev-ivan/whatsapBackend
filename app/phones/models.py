@@ -1,6 +1,5 @@
-from django.utils.translation import gettext_lazy as _
-
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Phone(models.Model):
@@ -20,10 +19,10 @@ class Phone(models.Model):
 
     def get_status(self):
         return self.StatusChoices(self.status)
-    
+
     def __str__(self):
         return f"{self.serial} - {self.model}"
-    
+
     class Meta:
         db_table = 'phones'
         verbose_name = "Телефон"
@@ -36,7 +35,7 @@ class PhoneLimit(models.Model):
     warming_message_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в прогреве")
     call_outgoing_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками")
     call_take_phone_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками")
-    
+
     def __str__(self):
         return f"{self.phone} - Лимиты"
     

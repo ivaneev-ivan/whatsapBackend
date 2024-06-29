@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -18,10 +17,14 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('serial', models.CharField(max_length=50, unique=True, verbose_name='Серий номер телефона')),
                 ('model', models.CharField(max_length=50, verbose_name='Модель телефона')),
-                ('w_business', models.CharField(blank=True, max_length=50, null=True, verbose_name='Номер телефона в whatsapp business')),
-                ('w_base', models.CharField(blank=True, max_length=50, null=True, verbose_name='Номер телефона в whatsapp')),
+                ('w_business', models.CharField(blank=True, max_length=50, null=True,
+                                                verbose_name='Номер телефона в whatsapp business')),
+                ('w_base',
+                 models.CharField(blank=True, max_length=50, null=True, verbose_name='Номер телефона в whatsapp')),
                 ('is_usual', models.BooleanField(default=False, verbose_name='Используется 2 whatsapp')),
-                ('status', models.CharField(choices=[('OFF', 'off'), ('ON', 'on'), ('PROGRESS', 'in progress')], default='OFF', verbose_name='Статус телефона')),
+                ('status',
+                 models.CharField(choices=[('OFF', 'off'), ('ON', 'on'), ('PROGRESS', 'in progress')], default='OFF',
+                                  verbose_name='Статус телефона')),
                 ('note', models.TextField(blank=True, null=True, verbose_name='Пометки')),
             ],
             options={
@@ -35,9 +38,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('message_limits', models.SmallIntegerField(verbose_name='Диапазон пауз между сообщениями в рассылке')),
-                ('warming_message_limits', models.SmallIntegerField(verbose_name='Диапазон пауз между сообщениями в прогреве')),
-                ('call_outgoing_limits', models.SmallIntegerField(verbose_name='Диапазон пауз между исходящими звонками')),
-                ('call_take_phone_limits', models.SmallIntegerField(verbose_name='Диапазон пауз между исходящими звонками')),
+                ('warming_message_limits',
+                 models.SmallIntegerField(verbose_name='Диапазон пауз между сообщениями в прогреве')),
+                ('call_outgoing_limits',
+                 models.SmallIntegerField(verbose_name='Диапазон пауз между исходящими звонками')),
+                ('call_take_phone_limits',
+                 models.SmallIntegerField(verbose_name='Диапазон пауз между исходящими звонками')),
                 ('phone', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='phones.phone')),
             ],
             options={
