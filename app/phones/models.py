@@ -1,44 +1,66 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+
+from core.utils import StatusChoices
 
 
-class Phone(models.Model):
-    class StatusChoices(models.TextChoices):
-        OFF = "OFF", _("Выключен")
-        ON = "ON", _("Включен")
-        IN_PROGRESS = "PROGRESS", _("Исполняет команду")
-
+class Device(models.Model):
     serial = models.CharField(verbose_name="Серий номер телефона", max_length=50, unique=True)
     model = models.CharField(verbose_name="Модель телефона", max_length=50)
-    w_business = models.CharField(verbose_name="Номер телефона в whatsapp business", max_length=50, null=True,
-                                  blank=True)
-    w_base = models.CharField(verbose_name="Номер телефона в whatsapp", max_length=50, null=True, blank=True)
-    is_usual = models.BooleanField(verbose_name="Используется 2 whatsapp", default=False)
-    status = models.CharField(verbose_name="Статус телефона", choices=StatusChoices, default=StatusChoices.OFF)
     note = models.TextField(verbose_name="Пометки", null=True, blank=True)
-
-    def get_status(self):
-        return self.StatusChoices(self.status)
 
     def __str__(self):
         return f"{self.serial} - {self.model}"
 
     class Meta:
+        db_table = 'devices'
+        verbose_name = "Устройство"
+        verbose_name_plural = "Устройства"
+
+
+class Phone(models.Model):
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=False, blank=False, verbose_name="Номер телефона")
+    status = models.CharField(verbose_name="Статус номера телефона", choices=StatusChoices)
+    wa_is_business = models.BooleanField(default=False)
+
+    def get_status(self):
+        return StatusChoices(self.status)
+
+    def __str__(self):
+        return f"{self.device} - {self.phone}"
+
+    class Meta:
         db_table = 'phones'
         verbose_name = "Телефон"
-        verbose_name_plural = "Телефоны"
+        verbose_name_plural = "Номера телефонов"
 
 
 class PhoneLimit(models.Model):
     phone = models.ForeignKey(Phone, on_delete=models.CASCADE)
-    message_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в рассылке")
-    warming_message_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в прогреве")
-    call_outgoing_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками")
-    call_take_phone_limits = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками")
+    message_sec_limits_from = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в рассылке от",
+                                                       default=1)
+    message_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в рассылке до",
+                                                     default=3)
+    warming_message_sec_limits_from = models.SmallIntegerField(
+        verbose_name="Диапазон пауз между сообщениями в прогреве от",
+        default=1)
+    warming_message_sec_limits_to = models.SmallIntegerField(
+        verbose_name="Диапазон пауз между сообщениями в прогреве до",
+        default=3)
+    call_outgoing_sec_limits_from = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками от",
+                                                             default=1)
+    call_outgoing_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками до",
+                                                           default=3)
+    call_take_phone_sec_limits_from = models.SmallIntegerField(
+        verbose_name="Диапазон пауз между исходящими звонками от",
+        default=1)
+    call_take_phone_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками до",
+                                                             default=3)
 
     def __str__(self):
         return f"{self.phone} - Лимиты"
-    
+
     class Meta:
         db_table = 'phones_limits'
         verbose_name = 'Лимиты телефона'
