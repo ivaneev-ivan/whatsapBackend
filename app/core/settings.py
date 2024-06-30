@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # ///
     'phones.apps.PhonesConfig',
+    'tasks.apps.TasksConfig'
 ]
 
 MIDDLEWARE = [
