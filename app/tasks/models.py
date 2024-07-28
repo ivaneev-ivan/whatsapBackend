@@ -50,7 +50,7 @@ class Task(models.Model):
 
 
 class TaskArg(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="args")
     arg = models.ForeignKey(CommandArg, on_delete=models.CASCADE)
     value = models.CharField(verbose_name="Значение атрибута", max_length=255)
 

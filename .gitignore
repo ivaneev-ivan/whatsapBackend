@@ -176,3 +176,5 @@ cython_debug/
 .idea
 .env
 .env.db
+app/static
+app/media
