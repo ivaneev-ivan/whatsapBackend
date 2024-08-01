@@ -21,7 +21,7 @@ class Device(models.Model):
 class Phone(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     phone = PhoneNumberField(null=False, blank=False, verbose_name="Номер телефона")
-    status = models.CharField(verbose_name="Статус номера телефона", choices=StatusChoices)
+    online = models.BooleanField(default=True)
     wa_is_business = models.BooleanField(default=False)
 
     def get_status(self):
@@ -38,26 +38,36 @@ class Phone(models.Model):
 
 class PhoneLimit(models.Model):
     phone = models.ForeignKey(Phone, on_delete=models.CASCADE)
-    message_sec_limits_from = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в рассылке от",
-                                                       default=1)
-    message_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между сообщениями в рассылке до",
-                                                     default=3)
-    warming_message_sec_limits_from = models.SmallIntegerField(
-        verbose_name="Диапазон пауз между сообщениями в прогреве от",
-        default=1)
-    warming_message_sec_limits_to = models.SmallIntegerField(
-        verbose_name="Диапазон пауз между сообщениями в прогреве до",
-        default=3)
-    call_outgoing_sec_limits_from = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками от",
-                                                             default=1)
-    call_outgoing_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками до",
-                                                           default=3)
-    call_take_phone_sec_limits_from = models.SmallIntegerField(
-        verbose_name="Диапазон пауз между исходящими звонками от",
-        default=1)
-    call_take_phone_sec_limits_to = models.SmallIntegerField(verbose_name="Диапазон пауз между исходящими звонками до",
-                                                             default=3)
-
+    
+    warming_call_outgoing_sec_limits_from = models.PositiveIntegerField(default=3600)
+    warming_call_outgoing_sec_limits_to = models.PositiveIntegerField(default=10800 )
+    warming_call_outgoing_sec_limits_delta = models.IntegerField(default=-100)
+    warming_call_outgoing_sec_limits_from_min = models.PositiveIntegerField(default=1000)
+    warming_call_outgoing_sec_limits_to_min = models.PositiveIntegerField(default=3600)
+    warming_call_outgoing_duration_sec_limits_from = models.PositiveIntegerField(default=15)
+    warming_call_outgoing_duration_sec_limits_to = models.PositiveIntegerField(default=35)
+    warming_call_incoming_take_phone_sec_limits_from = models.PositiveIntegerField(default=20)
+    warming_call_incoming_take_phone_sec_limits_from = models.PositiveIntegerField(default=40)
+    
+    warming_call_qty_outgoing = models.PositiveIntegerField(default=0)
+    warming_call_qty_incoming = models.PositiveIntegerField(default=0)
+    
+    warming_message_sec_limits_from = models.PositiveIntegerField(default=300)
+    warming_message_sec_limits_to = models.PositiveIntegerField(default=1500)
+    warming_message_sec_limits_delta = models.IntegerField(default=-30)
+    warming_message_sec_limits_from_min = models.PositiveIntegerField(default=80)
+    warming_message_sec_limits_to_min = models.PositiveBigIntegerField(default=150)
+    
+    warming_message_qty_sent = models.PositiveIntegerField(default=0)
+    warming_message_qty_receive = models.PositiveBigIntegerField(default=0)
+    
+    message_sec_limits_from = models.PositiveIntegerField(default=70)
+    message_sec_limits_to = models.PositiveIntegerField(default=350)
+    
+    message_autoanswer_sec_limits_from = models.PositiveIntegerField(default=350)
+    message_autoanswer_sec_limits_to = models.PositiveIntegerField(default=350)
+    
+    
     def __str__(self):
         return f"{self.phone} - Лимиты"
 

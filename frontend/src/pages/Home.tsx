@@ -86,7 +86,12 @@ const GetRow: FC<Element> = element => {
 			</Table.Td>
 			<Table.Td>
 				<Flex gap='xs'>
-					<Input value={data.sendLimitFrom} />
+					<Input
+						onChange={e =>
+							setData({ ...data, sendLimitFrom: Number(e.target.value) })
+						}
+						value={data.sendLimitFrom}
+					/>
 					<Input value={data.sendLimitTo} />
 				</Flex>
 			</Table.Td>
