@@ -34,7 +34,7 @@ services:
     command: npm run preview
     build: ./frontend
     ports:
-      - '5000:3000'
+      - '3000:3000'
 volumes:
   postgres_data:
   static_volume:
