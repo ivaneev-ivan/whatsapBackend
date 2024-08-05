@@ -1,121 +1,54 @@
 import { Button, Flex, Input, Table, Textarea } from '@mantine/core'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getAllPhones } from '../api/api'
+import { PhoneLimit } from '../api/types'
 import Layout from '../components/Layout'
 
-interface Element {
-	phone: string
-	sendLimitFrom: number
-	sendLimitTo: number
-	autoLimitFrom: number
-	autoLimitTo: number
-	progrevFrom: number
-	progrevTo: number
-	callFrom: number
-	callTo: number
-	percentProgrev: number
-	status: string
-	note: string
-}
-const elements = [
-	{
-		phone: '+79952680545',
-		sendLimitFrom: 10,
-		sendLimitTo: 20,
-		autoLimitFrom: 10,
-		autoLimitTo: 30,
-		progrevFrom: 10,
-		progrevTo: 10,
-		callFrom: 10,
-		callTo: 20,
-		percentProgrev: 20,
-		status: 'Нажатие на кнопку отправелние',
-		note: '',
-	},
-	{
-		phone: '+79952680545',
-		sendLimitFrom: 10,
-		sendLimitTo: 20,
-		autoLimitFrom: 10,
-		autoLimitTo: 30,
-		progrevFrom: 10,
-		progrevTo: 10,
-		callFrom: 10,
-		callTo: 20,
-		percentProgrev: 20,
-		status: 'send',
-		note: '',
-	},
-	{
-		phone: '+79952680545',
-		sendLimitFrom: 10,
-		sendLimitTo: 20,
-		autoLimitFrom: 10,
-		autoLimitTo: 30,
-		progrevFrom: 10,
-		progrevTo: 10,
-		callFrom: 10,
-		callTo: 20,
-		percentProgrev: 20,
-		status: '',
-		note: '',
-	},
-	{
-		phone: '+79952680545',
-		sendLimitFrom: 10,
-		sendLimitTo: 20,
-		autoLimitFrom: 10,
-		autoLimitTo: 30,
-		progrevFrom: 10,
-		progrevTo: 10,
-		callFrom: 10,
-		callTo: 20,
-		percentProgrev: 20,
-		status: '',
-		note: '',
-	},
-]
-
-const GetRow: FC<Element> = element => {
-	const [data, setData] = useState<Element>(element)
-
+const GetRow: FC<PhoneLimit> = el => {
+	const [data, setData] = useState<PhoneLimit>(el)
 	return (
-		<Table.Tr key={data.phone}>
+		<Table.Tr>
 			<Table.Td>
-				<Link to='#'>{data.phone}</Link>
+				<Link to='#'>{data.id}</Link>
 			</Table.Td>
 			<Table.Td>
 				<Flex gap='xs'>
 					<Input
 						onChange={e =>
-							setData({ ...data, sendLimitFrom: Number(e.target.value) })
+							setData({
+								...data,
+								message_sec_limits_from: Number(e.target.value),
+							})
 						}
-						value={data.sendLimitFrom}
+						value={data.message_sec_limits_from}
 					/>
-					<Input value={data.sendLimitTo} />
+					<Input value={data.message_sec_limits_to} />
 				</Flex>
 			</Table.Td>
 			<Table.Td>
 				<Flex gap='xs'>
-					<Input value={data.autoLimitFrom} />
-					<Input value={data.autoLimitTo} />
+					<Input value={data.message_autoanswer_sec_limits_from} />
+					<Input value={data.message_autoanswer_sec_limits_to} />
 				</Flex>
 			</Table.Td>
 			<Table.Td>
 				<Flex gap='xs'>
-					<Input value={data.progrevFrom} />
-					<Input value={data.progrevTo} />
+					<Input value={data.warming_message_sec_limits_from} />
+					<Input value={data.warming_message_sec_limits_to} />
 				</Flex>
 			</Table.Td>
 			<Table.Td>
 				<Flex gap='xs'>
-					<Input value={data.callFrom} />
-					<Input value={data.callTo} />
+					<Input value={data.warming_call_outgoing_sec_limits_from} />
+					<Input value={data.warming_call_outgoing_sec_limits_to} />
 				</Flex>
 			</Table.Td>
-			<Table.Td>{data.status}</Table.Td>
+			<Table.Td>{data.phone.online ? 'Онлайн' : 'Офлайн'}</Table.Td>
 			<Table.Td>
-				<Textarea value={data.note} />
+				<Textarea
+					value={data.phone.device.note === null ? '' : data.phone.device.note}
+				/>
 			</Table.Td>
 			<Table.Td>
 				<Button variant='filled' color='red'>
@@ -127,7 +60,13 @@ const GetRow: FC<Element> = element => {
 }
 
 const Home = () => {
-	const rows = elements.map(element => GetRow(element))
+	const [data, setData] = useState<PhoneLimit[]>([])
+	useEffect(() => {
+		;(async () => {
+			setData(await getAllPhones())
+		})()
+	}, [])
+
 	return (
 		<Layout>
 			<Table highlightOnHover withTableBorder withColumnBorders>
@@ -143,7 +82,11 @@ const Home = () => {
 						<Table.Th></Table.Th>
 					</Table.Tr>
 				</Table.Thead>
-				<Table.Tbody>{rows}</Table.Tbody>
+				<Table.Tbody>
+					{data.map(el => (
+						<GetRow {...el} key={'phone limit ' + el.id} />
+					))}
+				</Table.Tbody>
 			</Table>
 		</Layout>
 	)
